@@ -31,7 +31,7 @@ fn main() {
             if pixel_center.is_in_neighbour(Point3::new(0., 0., -1.), 0.01) {
                 println!("{}", Color::RED)
             } else {
-                let pixel_color = ray.hit_color(sphere);
+                let pixel_color = ray.hit_color(&sphere);
                 println!("{pixel_color}")
             }
         }

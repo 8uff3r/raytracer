@@ -1,8 +1,8 @@
 use crate::utils::vector::*;
 
 pub trait Hittable {
-    fn hit(&self, ray: Ray) -> f64;
-    fn normal(&self, ray: Ray, t: f64) -> Vec3;
+    fn hit(&self, ray: &Ray) -> f64;
+    fn normal(&self, ray: &Ray, t: f64) -> Vec3;
 }
 
 pub struct Sphere {
@@ -10,7 +10,7 @@ pub struct Sphere {
     pub radius: f64,
 }
 impl Hittable for Sphere {
-    fn hit(&self, ray: Ray) -> f64 {
+    fn hit(&self, ray: &Ray) -> f64 {
         let oc = self.center - ray.origin;
         let a = ray.direction.length_squared();
         let h = ray.direction * (oc);
@@ -22,7 +22,7 @@ impl Hittable for Sphere {
             (h - discriminant.sqrt()) / a
         }
     }
-    fn normal(&self, ray: Ray, t: f64) -> Vec3 {
+    fn normal(&self, ray: &Ray, t: f64) -> Vec3 {
         (ray.at(t) - self.center).unit_vector()
     }
 }

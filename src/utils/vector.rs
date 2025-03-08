@@ -135,10 +135,10 @@ impl Ray {
     pub fn at(&self, t: f64) -> Vec3 {
         self.origin + (self.direction * t)
     }
-    pub fn hit_color(&self, hit_object: impl Hittable) -> Color {
-        let t = hit_object.hit(*self);
+    pub fn hit_color(&self, hit_object: &impl Hittable) -> Color {
+        let t = hit_object.hit(self);
         if t > 0. {
-            let normal = hit_object.normal(*self, t);
+            let normal = hit_object.normal(self, t);
             Color::new(normal.x + 1., normal.y + 1., normal.z + 1.) * 0.5
         } else {
             let unit_drection = self.direction.unit_vector();
