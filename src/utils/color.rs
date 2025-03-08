@@ -1,4 +1,7 @@
-use std::{fmt::Display, ops::Add};
+use std::{
+    fmt::Display,
+    ops::{Add, Mul},
+};
 
 pub struct Color {
     pub r: f64,
@@ -23,6 +26,16 @@ impl Add for Color {
             r: self.r + rhs.r,
             g: self.g + rhs.g,
             b: self.b + rhs.b,
+        }
+    }
+}
+impl Mul<f64> for Color {
+    type Output = Self;
+    fn mul(self, rhs: f64) -> Self::Output {
+        Self {
+            r: self.r * rhs,
+            g: self.g * rhs,
+            b: self.b * rhs,
         }
     }
 }
@@ -79,13 +92,6 @@ impl Color {
             r: self.r * 255.999,
             g: self.g * 255.999,
             b: self.b * 255.999,
-        }
-    }
-    pub fn muli(&self, s: f64) -> Self {
-        Self {
-            r: self.r * s,
-            g: self.g * s,
-            b: self.b * s,
         }
     }
 }

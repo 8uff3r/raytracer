@@ -1,7 +1,7 @@
 use crate::utils::{color::*, shapes::*};
 use std::{
     fmt::Display,
-    ops::{Add, Mul, Neg, Sub},
+    ops::{Add, Div, Mul, Neg, Sub},
 };
 
 impl Add for Vec3 {
@@ -12,6 +12,16 @@ impl Add for Vec3 {
             x: self.x + rhs.x,
             y: self.y + rhs.y,
             z: self.z + rhs.z,
+        }
+    }
+}
+impl Add<f64> for Vec3 {
+    type Output = Vec3;
+    fn add(self, rhs: f64) -> Self::Output {
+        Self {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
         }
     }
 }
@@ -26,10 +36,26 @@ impl Sub for Vec3 {
         }
     }
 }
+impl Div<f64> for Vec3 {
+    type Output = Vec3;
+    fn div(self, rhs: f64) -> Self::Output {
+        self * (1. / rhs)
+    }
+}
 impl Mul for Vec3 {
     type Output = f64;
     fn mul(self, rhs: Self) -> Self::Output {
         self.x * rhs.x + self.y * rhs.y + self.z * rhs.z
+    }
+}
+impl Mul<f64> for Vec3 {
+    type Output = Vec3;
+    fn mul(self, rhs: f64) -> Self::Output {
+        Self {
+            x: self.x * rhs,
+            y: self.y * rhs,
+            z: self.z * rhs,
+        }
     }
 }
 impl Neg for Vec3 {
@@ -56,7 +82,7 @@ impl Display for Vec3 {
 }
 impl Point3 {
     pub fn is_in_neighbour(&self, v: Self, t: f64) -> bool {
-        v.sub(*self).magnitude() <= t
+        (v - (*self)).magnitude() <= t
     }
 }
 impl Vec3 {
@@ -70,16 +96,6 @@ impl Vec3 {
             z: (self.x * v.y) - (self.y * v.x),
         }
     }
-    pub fn muli(&self, s: f64) -> Self {
-        Self {
-            x: self.x * s,
-            y: self.y * s,
-            z: self.z * s,
-        }
-    }
-    pub fn divi(&self, s: f64) -> Self {
-        self.muli(1. / s)
-    }
     pub fn magnitude(&self) -> f64 {
         self.length_squared().sqrt()
     }
@@ -91,11 +107,11 @@ impl Vec3 {
         if mag == 0.0 {
             *self
         } else {
-            self.divi(mag)
+            *self / mag
         }
     }
     pub fn unit_vector(&self) -> Self {
-        self.divi(self.magnitude())
+        (*self) / self.magnitude()
     }
 }
 
@@ -117,17 +133,17 @@ impl Ray {
         Self { origin, direction }
     }
     pub fn at(&self, t: f64) -> Vec3 {
-        self.origin + self.direction.muli(t)
+        self.origin + (self.direction * t)
     }
     pub fn hit_color(&self, hit_object: impl Hittable) -> Color {
         let t = hit_object.hit(*self);
         if t > 0. {
             let normal = hit_object.normal(*self, t);
-            Color::new(normal.x + 1., normal.y + 1., normal.z + 1.).muli(0.5)
+            Color::new(normal.x + 1., normal.y + 1., normal.z + 1.) * 0.5
         } else {
             let unit_drection = self.direction.unit_vector();
             let alpha = 0.5 * (unit_drection.y + 1.);
-            Color::WHITE.muli(1. - alpha) + Color::new(0.5, 0.7, 1.).muli(alpha)
+            (Color::WHITE * (1. - alpha)) + (Color::new(0.5, 0.7, 1.) * alpha)
         }
     }
 }
