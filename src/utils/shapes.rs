@@ -23,6 +23,6 @@ impl Hittable for Sphere {
         }
     }
     fn normal(&self, ray: Ray, t: f64) -> Vec3 {
-        ray.at(t) - self.center.unit_vector()
+        (ray.at(t) - self.center).unit_vector()
     }
 }
