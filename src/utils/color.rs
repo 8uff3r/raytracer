@@ -13,9 +13,9 @@ impl Display for Color {
         let hex_rgb = self.to_hex();
         f.write_fmt(format_args!(
             "{} {} {}",
-            Color::to_u8(hex_rgb.r),
-            Color::to_u8(hex_rgb.g),
-            Color::to_u8(hex_rgb.b)
+            (hex_rgb.r as u8),
+            (hex_rgb.g as u8),
+            (hex_rgb.b as u8)
         ))
     }
 }
@@ -76,22 +76,22 @@ impl Color {
     }
     pub fn new_from_hex(r: f64, g: f64, b: f64) -> Self {
         Self {
-            r: r * 255.999,
-            g: g * 255.999,
-            b: b * 255.999,
+            r: Self::map_to_hex(r) / 255.,
+            g: Self::map_to_hex(g) / 255.,
+            b: Self::map_to_hex(b) / 255.,
         }
     }
-    pub fn to_u8(v: f64) -> u8 {
+    fn map_to_hex(v: f64) -> f64 {
         if v > 255. {
-            return 255;
+            return 255.;
         }
-        v as u8
+        v
     }
     pub fn to_hex(&self) -> Self {
         Self {
-            r: self.r * 255.999,
-            g: self.g * 255.999,
-            b: self.b * 255.999,
+            r: Self::map_to_hex(self.r * 255.999),
+            g: Self::map_to_hex(self.g * 255.999),
+            b: Self::map_to_hex(self.b * 255.999),
         }
     }
 }
