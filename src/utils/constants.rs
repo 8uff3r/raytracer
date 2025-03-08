@@ -1,7 +1,7 @@
 use crate::utils::vector::*;
 // Image
 pub const ASPECT_RATIO: f64 = 16. / 9.;
-pub const IMAGE_WIDTH: i32 = 400;
+pub const IMAGE_WIDTH: i32 = 800;
 pub const IMAGE_HEIGHT: i32 = {
     let h: f64 = (IMAGE_WIDTH as f64) / ASPECT_RATIO;
     if h < 1. {

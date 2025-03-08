@@ -11,9 +11,9 @@ pub struct Sphere {
 }
 impl Hittable for Sphere {
     fn hit(&self, ray: Ray) -> f64 {
-        let oc = self.center.sub(ray.origin);
+        let oc = self.center - ray.origin;
         let a = ray.direction.length_squared();
-        let h = ray.direction.dot(oc);
+        let h = ray.direction * (oc);
         let c = oc.length_squared() - self.radius.powi(2);
         let discriminant = h.powi(2) - (a * c);
         if discriminant < 0. {
@@ -23,6 +23,6 @@ impl Hittable for Sphere {
         }
     }
     fn normal(&self, ray: Ray, t: f64) -> Vec3 {
-        (ray.at(t)).sub(self.center).unit_vector()
+        ray.at(t) - self.center.unit_vector()
     }
 }

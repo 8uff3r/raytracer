@@ -1,4 +1,4 @@
-use std::fmt::Display;
+use std::{fmt::Display, ops::Add};
 
 pub struct Color {
     pub r: f64,
@@ -14,6 +14,16 @@ impl Display for Color {
             Color::to_u8(hex_rgb.g),
             Color::to_u8(hex_rgb.b)
         ))
+    }
+}
+impl Add for Color {
+    type Output = Self;
+    fn add(self, rhs: Self) -> Self::Output {
+        Self {
+            r: self.r + rhs.r,
+            g: self.g + rhs.g,
+            b: self.b + rhs.b,
+        }
     }
 }
 impl Color {
@@ -71,14 +81,7 @@ impl Color {
             b: self.b * 255.999,
         }
     }
-    pub fn add(&self, v: Self) -> Self {
-        Self {
-            r: self.r + v.r,
-            g: self.g + v.g,
-            b: self.b + v.b,
-        }
-    }
-    pub fn mul(&self, s: f64) -> Self {
+    pub fn muli(&self, s: f64) -> Self {
         Self {
             r: self.r * s,
             g: self.g * s,

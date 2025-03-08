@@ -1,6 +1,47 @@
 use crate::utils::{color::*, shapes::*};
-use std::fmt::Display;
+use std::{
+    fmt::Display,
+    ops::{Add, Mul, Neg, Sub},
+};
 
+impl Add for Vec3 {
+    type Output = Vec3;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        Self {
+            x: self.x + rhs.x,
+            y: self.y + rhs.y,
+            z: self.z + rhs.z,
+        }
+    }
+}
+impl Sub for Vec3 {
+    type Output = Vec3;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        Self {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+            z: self.z - rhs.z,
+        }
+    }
+}
+impl Mul for Vec3 {
+    type Output = f64;
+    fn mul(self, rhs: Self) -> Self::Output {
+        self.x * rhs.x + self.y * rhs.y + self.z * rhs.z
+    }
+}
+impl Neg for Vec3 {
+    type Output = Vec3;
+    fn neg(self) -> Self::Output {
+        Self {
+            x: -self.x,
+            y: -self.y,
+            z: -self.z,
+        }
+    }
+}
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Vec3 {
     pub x: f64,
@@ -22,26 +63,6 @@ impl Vec3 {
     pub fn new(x: f64, y: f64, z: f64) -> Self {
         Self { x, y, z }
     }
-    pub fn add(&self, v: Self) -> Self {
-        Self {
-            x: self.x + v.x,
-            y: self.y + v.y,
-            z: self.z + v.z,
-        }
-    }
-    pub fn sub(&self, v: Self) -> Self {
-        self.add(v.neg())
-    }
-    pub fn neg(&self) -> Self {
-        Self {
-            x: -self.x,
-            y: -self.y,
-            z: -self.z,
-        }
-    }
-    pub fn dot(&self, v: Self) -> f64 {
-        self.x * v.x + self.y * v.y + self.z * v.z
-    }
     pub fn _cross(&self, v: Self) -> Self {
         Self {
             x: (self.y * v.z) - (self.z * v.y),
@@ -49,32 +70,32 @@ impl Vec3 {
             z: (self.x * v.y) - (self.y * v.x),
         }
     }
-    pub fn mul(&self, s: f64) -> Self {
+    pub fn muli(&self, s: f64) -> Self {
         Self {
             x: self.x * s,
             y: self.y * s,
             z: self.z * s,
         }
     }
-    pub fn div(&self, s: f64) -> Self {
-        self.mul(1. / s)
+    pub fn divi(&self, s: f64) -> Self {
+        self.muli(1. / s)
     }
     pub fn magnitude(&self) -> f64 {
         self.length_squared().sqrt()
     }
     pub fn length_squared(&self) -> f64 {
-        self.dot(*self)
+        (*self) * (*self)
     }
     pub fn _normalize(&self) -> Self {
         let mag = self.magnitude();
         if mag == 0.0 {
             *self
         } else {
-            self.div(mag)
+            self.divi(mag)
         }
     }
     pub fn unit_vector(&self) -> Self {
-        self.div(self.magnitude())
+        self.divi(self.magnitude())
     }
 }
 
@@ -96,19 +117,17 @@ impl Ray {
         Self { origin, direction }
     }
     pub fn at(&self, t: f64) -> Vec3 {
-        self.origin.add(self.direction.mul(t))
+        self.origin + self.direction.muli(t)
     }
     pub fn hit_color(&self, hit_object: impl Hittable) -> Color {
         let t = hit_object.hit(*self);
         if t > 0. {
             let normal = hit_object.normal(*self, t);
-            Color::new(normal.x + 1., normal.y + 1., normal.z + 1.).mul(0.5)
+            Color::new(normal.x + 1., normal.y + 1., normal.z + 1.).muli(0.5)
         } else {
             let unit_drection = self.direction.unit_vector();
             let alpha = 0.5 * (unit_drection.y + 1.);
-            Color::WHITE
-                .mul(1. - alpha)
-                .add(Color::new(0.5, 0.7, 1.).mul(alpha))
+            Color::WHITE.muli(1. - alpha) + Color::new(0.5, 0.7, 1.).muli(alpha)
         }
     }
 }
